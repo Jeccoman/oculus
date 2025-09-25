@@ -1,0 +1,22 @@
+{
+  "name": "@oculus/auth",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/passport": "^10.0.3",
+    "bcryptjs": "^2.4.3",
+    "passport-jwt": "^4.0.1",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/passport-jwt": "^4.0.1",
+    "@types/passport-local": "^1.0.38"
+  }
+}
