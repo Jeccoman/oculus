@@ -1,7 +1,7 @@
 import { AbstractGetDto } from '@app/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsArray, IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class GetCategoryDto extends AbstractGetDto {
   @ApiProperty({
@@ -38,4 +38,24 @@ export class GetCategoryDto extends AbstractGetDto {
   @IsOptional()
   @Expose()
   image?: string;
+
+  @ApiProperty({
+    example: 1,
+    required: false,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Expose()
+  parent_id?: number | null;
+
+  @ApiProperty({
+    type: () => GetCategoryDto,
+    isArray: true,
+    required: false,
+  })
+  @IsArray()
+  @IsOptional()
+  @Type(() => GetCategoryDto)
+  @Expose()
+  children?: GetCategoryDto[];
 }

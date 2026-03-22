@@ -290,7 +290,7 @@ pnpm run test:e2e
 - [x] Docker-compose
 - [x] Env
 - [x] Document
-  - [x] Githab Readme
+  - [x] GitHub README
   - [x] Postman
   - [x] Auto generated swagger
 - [ ] Test
@@ -300,10 +300,14 @@ pnpm run test:e2e
 ## TODO
 
 - [x] Fix Get OTP to expire its session
-- [x] full_name nullable
-- [ ] Category Tree
-- [x] Get Lists be able to support the pagination
+- [x] Make `full_name` nullable
+- [x] Support pagination for list endpoints
+- [x] Return `401 Unauthorized` for unknown-user login attempts
+- [x] Generate a valid 5-digit OTP consistently
+- [x] Category Tree
+- [ ] Expand auth unit and e2e coverage
 - [ ] Refresh Token
+- [ ] K8S deployment setup
 
 ## Contributing
 
@@ -320,6 +324,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 - Hardened auth login to return `401 Unauthorized` for unknown users instead of failing on missing credentials state.
 - Fixed OTP generation to always produce a valid 5-digit code.
 - Added focused auth service unit tests for invalid login handling and OTP generation.
+- Added nested category tree support with parent-child category relationships and a `GET /categories/tree` endpoint.
 
 ### 3.0.0 (2025-02-23)
 

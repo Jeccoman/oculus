@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty({
@@ -24,4 +24,12 @@ export class CreateCategoryDto {
   @IsUrl()
   @IsOptional()
   image?: string;
+
+  @ApiProperty({
+    example: 1,
+    required: false,
+  })
+  @IsNumber()
+  @IsOptional()
+  parent_id?: number | null;
 }

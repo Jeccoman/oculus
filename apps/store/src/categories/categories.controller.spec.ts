@@ -14,6 +14,7 @@ describe('CategoriesController', () => {
   class MockCategoriesService {
     create = jest.fn();
     findAll = jest.fn();
+    findTree = jest.fn();
     findOne = jest.fn();
     update = jest.fn();
     remove = jest.fn();
@@ -130,6 +131,33 @@ describe('CategoriesController', () => {
 
       expect(result).toEqual(mockCategory);
       expect(findOneSpy).toHaveBeenCalledWith({ id: 1 });
+    });
+  });
+
+  describe('findTree', () => {
+    it('should return nested categories', async () => {
+      const mockTree = [
+        {
+          id: 1,
+          name: 'Root',
+          children: [
+            {
+              id: 2,
+              name: 'Child',
+              children: [],
+            },
+          ],
+        },
+      ];
+
+      const findTreeSpy = jest
+        .spyOn(categoriesService, 'findTree')
+        .mockResolvedValue(mockTree);
+
+      const result = await categoriesController.findTree();
+
+      expect(result).toEqual(mockTree);
+      expect(findTreeSpy).toHaveBeenCalledTimes(1);
     });
   });
 

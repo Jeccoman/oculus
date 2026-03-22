@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
 import { CategoriesRepository } from './categories.repository';
@@ -11,6 +12,9 @@ describe('CategoriesService', () => {
   let categoriesRepository: CategoriesRepository;
 
   class MockCategoriesRepository {
+    entityRepository = {
+      find: jest.fn(),
+    };
     create = jest.fn();
     findOneNoCheck = jest.fn();
     findOne = jest.fn();
@@ -55,6 +59,24 @@ describe('CategoriesService', () => {
       expect(createSpy).toHaveBeenCalledWith(new Category(createCategoryDto));
       expect(createSpy).toHaveBeenCalledTimes(1);
     });
+
+    it('should validate the parent category when parent_id is provided', async () => {
+      const createCategoryDto: CreateCategoryDto = {
+        name: 'Child Category',
+        parent_id: 1,
+      };
+
+      jest
+        .spyOn(categoriesRepository, 'findOne')
+        .mockResolvedValue(new Category({ id: 1, name: 'Parent Category' }));
+      jest
+        .spyOn(categoriesRepository, 'create')
+        .mockResolvedValue(new Category({ id: 2, ...createCategoryDto }));
+
+      await categoriesService.create(createCategoryDto);
+
+      expect(categoriesRepository.findOne).toHaveBeenCalledWith({ id: 1 });
+    });
   });
 
   // describe('findAll', () => {
@@ -92,6 +114,42 @@ describe('CategoriesService', () => {
     });
   });
 
+  describe('findTree', () => {
+    it('should return nested categories', async () => {
+      const categories = [
+        new Category({ id: 1, name: 'Root' }),
+        new Category({ id: 2, name: 'Child', parent_id: 1 }),
+        new Category({ id: 3, name: 'Grandchild', parent_id: 2 }),
+      ];
+
+      jest
+        .spyOn(categoriesRepository.entityRepository, 'find')
+        .mockResolvedValue(categories);
+
+      const result = await categoriesService.findTree();
+
+      expect(result).toMatchObject([
+        {
+          id: 1,
+          name: 'Root',
+          children: [
+            {
+              id: 2,
+              name: 'Child',
+              children: [
+                {
+                  id: 3,
+                  name: 'Grandchild',
+                  children: [],
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+    });
+  });
+
   describe('update', () => {
     it('should update and return the updated category', async () => {
       const updateCategoryDto: UpdateCategoryDto = { name: 'Updated Category' };
@@ -108,6 +166,29 @@ describe('CategoriesService', () => {
         { id: 1 },
         { ...updateCategoryDto },
       );
+    });
+
+    it('should reject assigning a category as its own parent', async () => {
+      await expect(
+        categoriesService.update(1, { parent_id: 1 }),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should reject circular parent relationships', async () => {
+      jest
+        .spyOn(categoriesRepository, 'findOne')
+        .mockResolvedValue(new Category({ id: 3, name: 'Grandchild' }));
+      jest
+        .spyOn(categoriesRepository.entityRepository, 'find')
+        .mockResolvedValue([
+          new Category({ id: 1, name: 'Root', parent_id: null }),
+          new Category({ id: 2, name: 'Child', parent_id: 1 }),
+          new Category({ id: 3, name: 'Grandchild', parent_id: 2 }),
+        ]);
+
+      await expect(
+        categoriesService.update(1, { parent_id: 3 }),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 

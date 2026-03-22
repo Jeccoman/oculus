@@ -41,6 +41,16 @@ export class CategoriesController {
     return this.categoriesService.findAll(query);
   }
 
+  @Get('tree')
+  @Serialize(GetCategoryDto)
+  @ApiOkResponse({
+    type: GetCategoryDto,
+    isArray: true,
+  })
+  async findTree() {
+    return this.categoriesService.findTree();
+  }
+
   @Get(':id')
   @Serialize(GetCategoryDto)
   @ApiOkResponse({
