@@ -276,6 +276,20 @@ docker-compose -f ./docker-compose-test.yaml up
 pnpm run test:e2e
 ```
 
+## Releases
+
+This project does not publish to npm. Releases are created on GitHub from version tags.
+
+1. Move the important notes for the next version out of `Unreleased` into a versioned changelog entry in this file.
+2. Create and push a version tag:
+
+```bash
+git tag v3.1.0
+git push origin v3.1.0
+```
+
+3. GitHub Actions will automatically create a GitHub Release for that tag using generated release notes.
+
 ## Roadmap
 
 - [x] App microservices
