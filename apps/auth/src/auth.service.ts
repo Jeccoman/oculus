@@ -175,6 +175,10 @@ export class AuthService {
   async verifyUser(email: string, password: string) {
     const user = await this.usersService.findOneNoCheck({ email });
 
+    if (!user) {
+      throw new UnauthorizedException('Credentials are not valid');
+    }
+
     const isEqual = await AuthCommon.compareHash(
       user.hashed_password,
       password,
@@ -196,12 +200,9 @@ export class AuthService {
   }
 
   private generateUniqCode() {
-    // Generate 3 random bytes and convert them to a 5-digit number
+    // Convert 3 random bytes into a fixed 5-digit OTP.
     const buffer = randomBytes(3);
-    const otp = buffer.readUIntBE(0, 3) % 100000;
-
-    // Pad the OTP with leading zeros if necessary
-    return +otp.toString().padStart(5, '1');
+    return (buffer.readUIntBE(0, 3) % 90000) + 10000;
   }
 
   private async authenticate(user: User, response: Response): Promise<string> {

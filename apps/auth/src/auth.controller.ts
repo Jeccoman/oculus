@@ -69,7 +69,7 @@ export class AuthController {
   @ApiOkResponse({
     type: GetUserDto,
   })
-  async changePassowrd(
+  async changePassword(
     @CurrentUser() user: User,
     @Body() body: ChangePasswordDto,
     @Res({ passthrough: true }) response: Response,
@@ -90,7 +90,7 @@ export class AuthController {
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   async logout(@Res({ passthrough: true }) response: Response) {
-    this.authService.logout(response);
+    return this.authService.logout(response);
   }
 
   @Get('info')

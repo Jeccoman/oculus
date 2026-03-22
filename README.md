@@ -315,6 +315,12 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Change log
 
+### Unreleased
+
+- Hardened auth login to return `401 Unauthorized` for unknown users instead of failing on missing credentials state.
+- Fixed OTP generation to always produce a valid 5-digit code.
+- Added focused auth service unit tests for invalid login handling and OTP generation.
+
 ### 3.0.0 (2025-02-23)
 
 - Supporting Pagination for list retrieval endpoints.
